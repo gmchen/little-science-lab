@@ -6,7 +6,7 @@ import { generateBiopsy, newSeed, type Biopsy } from './biopsy'
 import { makeLayout } from './layout'
 import { Marrow } from './Marrow'
 import { LAST_STAGE, STAGES } from './stages'
-import { SPEEDS, type SpeedId, useIntroSetting, useSpeed } from './speed'
+import { SPEEDS, type Mode, type SpeedId, useIntroSetting, useModeSetting, useSpeed } from './speed'
 import { ParentPanel } from './ParentPanel'
 import './granulopoiesis.css'
 
@@ -35,13 +35,15 @@ function useSize(ref: React.RefObject<HTMLElement | null>) {
  */
 function Report({
   biopsy,
-  neutrophils,
+  progress,
   count,
+  mode,
   onInfo,
 }: {
   biopsy: Biopsy
-  neutrophils: number
+  progress: number
   count: number
+  mode: Mode
   onInfo: () => void
 }) {
   return (
@@ -50,10 +52,10 @@ function Report({
         <span className="report-title">Bone marrow, core biopsy</span>
         <span className="report-right">
           <span className="report-count">
-            Neutrophils: {neutrophils} / {count}
+            {mode === 'identify' ? 'Identified' : 'Neutrophils'}: {progress} / {count}
           </span>
-          <button className="report-info" aria-label="Show the clinical history again" onClick={onInfo}>
-            ⓘ History
+          <button className="report-info" aria-label="Read the clinical history of this case again" onClick={onInfo}>
+            ⓘ Read the case again
           </button>
         </span>
       </div>
@@ -88,6 +90,7 @@ export function GranulopoiesisApp({ onExit }: ActivityProps) {
   const [cells, setCells] = useState<CellState[]>([])
   const [speed, setSpeed] = useSpeed()
   const [introOn, setIntroOn] = useIntroSetting()
+  const [mode, setModeSetting] = useModeSetting()
   const [panelOpen, setPanelOpen] = useState(false)
   // Bumped when the marrow is first shown for a biopsy, so the report and the stage labels play then.
   const [epoch, setEpoch] = useState(0)
@@ -118,6 +121,8 @@ export function GranulopoiesisApp({ onExit }: ActivityProps) {
     setCells((old) =>
       old.map((c, j) => {
         if (j !== i) return c
+        // Identify keeps the cell as it is and just counts the tap (which shows its name).
+        if (mode === 'identify') return { stage: c.stage, prev: c.stage, tap: c.tap + 1 }
         const stage = Math.min(c.stage + 1, LAST_STAGE)
         // A tap during an animation jumps straight to the next stage and restarts the transition.
         return { stage, prev: c.stage, tap: c.tap + 1 }
@@ -147,9 +152,20 @@ export function GranulopoiesisApp({ onExit }: ActivityProps) {
     }
   }
 
+  /** Switching games starts the current biopsy over, so the marrow always begins as it was drawn. */
+  const switchMode = (next: Mode) => {
+    if (next === mode) return
+    setModeSetting(next)
+    setCells(biopsy.stages.slice(0, cells.length).map(fresh))
+    setEpoch((e) => e + 1)
+    setPanelOpen(false)
+  }
+
   const count = cells.length
-  const neutrophils = cells.filter((c) => c.stage === LAST_STAGE).length
-  const done = count > 0 && neutrophils === count
+  // Identify counts cells tapped at least once; Differentiate counts cells that became neutrophils.
+  const progress =
+    mode === 'identify' ? cells.filter((c) => c.tap > 0).length : cells.filter((c) => c.stage === LAST_STAGE).length
+  const done = count > 0 && progress === count
 
   const [againReady, setAgainReady] = useState(false)
   useEffect(() => {
@@ -166,8 +182,9 @@ export function GranulopoiesisApp({ onExit }: ActivityProps) {
       <Report
         key={epoch}
         biopsy={biopsy}
-        neutrophils={neutrophils}
+        progress={progress}
         count={count}
+        mode={mode}
         onInfo={() => setCaseOpen(true)}
       />
       <div className="stage" ref={stageRef}>
@@ -179,6 +196,7 @@ export function GranulopoiesisApp({ onExit }: ActivityProps) {
                 key={i}
                 index={i}
                 epoch={epoch}
+                mode={mode}
                 x={p.x}
                 y={p.y}
                 d={layout.d}
@@ -206,6 +224,8 @@ export function GranulopoiesisApp({ onExit }: ActivityProps) {
         onNew={() => start(newSeed())}
         introOn={introOn}
         onIntro={setIntroOn}
+        mode={mode}
+        onMode={switchMode}
         onExit={onExit}
       />
       {caseOpen && <CaseScreen biopsy={biopsy} onBegin={examine} />}

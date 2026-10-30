@@ -55,3 +55,27 @@ export function useIntroSetting(): [boolean, (on: boolean) => void] {
   }
   return [on, set]
 }
+
+export type Mode = 'identify' | 'differentiate'
+
+const MODE_KEY = 'little-science-lab.granulopoiesis.mode'
+
+/** Identify: tap a cell to see its name. Differentiate: tap a cell to mature it toward a neutrophil. */
+export function useModeSetting(): [Mode, (m: Mode) => void] {
+  const [mode, setMode] = useState<Mode>(() => {
+    try {
+      return localStorage.getItem(MODE_KEY) === 'differentiate' ? 'differentiate' : 'identify'
+    } catch {
+      return 'identify'
+    }
+  })
+  const set = (next: Mode) => {
+    setMode(next)
+    try {
+      localStorage.setItem(MODE_KEY, next)
+    } catch {
+      // ignore
+    }
+  }
+  return [mode, set]
+}

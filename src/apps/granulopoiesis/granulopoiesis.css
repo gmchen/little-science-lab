@@ -444,20 +444,31 @@
 }
 
 .report-info {
-  margin: -4px 0;
-  padding: 2px 10px;
-  border: 1px solid rgba(91, 58, 74, 0.3);
+  margin: -6px 0;
+  padding: 8px 16px;
+  border: 2px solid #6f3a8c;
   border-radius: 999px;
-  background: none;
-  font-size: 13px;
+  background: #fff;
+  font-size: 15px;
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   text-transform: none;
-  color: rgba(91, 58, 74, 0.8);
+  color: #6f3a8c;
 }
 
 .report-right {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+/* A soft ring marks cells that have been identified. */
+.found-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border: 3px solid rgba(111, 58, 140, 0.28);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
 }

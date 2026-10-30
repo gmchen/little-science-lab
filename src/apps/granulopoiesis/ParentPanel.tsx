@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { SPEEDS, type SpeedId } from './speed'
+import { SPEEDS, type Mode, type SpeedId } from './speed'
 
 const HOLD_MS = 800
 
@@ -15,11 +15,13 @@ interface Props {
   onNew: () => void
   introOn: boolean
   onIntro: (on: boolean) => void
+  mode: Mode
+  onMode: (m: Mode) => void
   onExit: () => void
 }
 
 /** Settings live behind a press-and-hold so a toddler's taps can't reach them. */
-export function ParentPanel({ open, onOpen, onClose, speed, onSpeed, seed, onStart, onNew, introOn, onIntro, onExit }: Props) {
+export function ParentPanel({ open, onOpen, onClose, speed, onSpeed, seed, onStart, onNew, introOn, onIntro, mode, onMode, onExit }: Props) {
   const timer = useRef<number>(0)
   const cancel = () => window.clearTimeout(timer.current)
   const [typed, setTyped] = useState('')
@@ -45,7 +47,16 @@ export function ParentPanel({ open, onOpen, onClose, speed, onSpeed, seed, onSta
       {open && (
         <div className="panel-backdrop" onPointerDown={onClose}>
           <div className="panel" onPointerDown={(e) => e.stopPropagation()}>
-            <h2>Transformation speed</h2>
+            <h2>Game</h2>
+            <div className="row">
+              <button className={mode === 'identify' ? 'on' : ''} onClick={() => onMode('identify')}>
+                Identify cells
+              </button>
+              <button className={mode === 'differentiate' ? 'on' : ''} onClick={() => onMode('differentiate')}>
+                Differentiate cells
+              </button>
+            </div>
+            <h2>Transformation speed (Differentiate)</h2>
             <div className="row">
               {(Object.keys(SPEEDS) as SpeedId[]).map((id) => (
                 <button key={id} className={id === speed ? 'on' : ''} onClick={() => onSpeed(id)}>

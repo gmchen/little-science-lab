@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react'
+import type { Mode } from './speed'
 import { LAST_STAGE, MAX_SIZE, STAGES } from './stages'
 
 export interface CellState {
@@ -16,6 +17,7 @@ interface Props {
   index: number
   /** Changes on reset so the opening stage label shows again. */
   epoch: number
+  mode: Mode
   /** Length of the stage transition; the name label swaps from old to new around its midpoint. */
   durMs: number
   state: CellState
@@ -36,7 +38,8 @@ const LABEL_SEQUENCE_MIN_MS = 500
 /** Point in the crossfade where the new cell overtakes the old one, so the name swaps with it. */
 const CROSSFADE_SWAP = 0.6
 
-export function Cell({ x, y, d, index, epoch, durMs, state, celebrate, onTap }: Props) {
+export function Cell({ x, y, d, index, epoch, mode, durMs, state, celebrate, onTap }: Props) {
+  const identify = mode === 'identify'
   const to = STAGES[state.stage]
   const from = STAGES[state.prev]
   const advanced = state.prev !== state.stage
@@ -72,7 +75,8 @@ export function Cell({ x, y, d, index, epoch, durMs, state, celebrate, onTap }: 
     '--label-size': `${Math.max(13, Math.min(20, d * 0.13))}px`,
   } as CSSProperties
 
-  const showLabel = state.tap === 0 || advanced
+  // Identify keeps the name hidden until the cell is tapped; the other mode shows each stage's name.
+  const showLabel = identify ? state.tap > 0 : state.tap === 0 || advanced
 
   return (
     <button
@@ -88,7 +92,7 @@ export function Cell({ x, y, d, index, epoch, durMs, state, celebrate, onTap }: 
       <span className="cell-float">
         <span
           key={state.tap}
-          className={`cell-pop${state.tap > 0 ? (state.stage === LAST_STAGE && !advanced ? ' wiggle' : ' pop') : ''}`}
+          className={`cell-pop${state.tap > 0 ? (!identify && state.stage === LAST_STAGE && !advanced ? ' wiggle' : ' pop') : ''}`}
         >
           <span className="cell-rot" style={{ rotate: `${Math.round(rnd(index, 30) * 360)}deg` }}>
             {advanced && (
@@ -121,6 +125,9 @@ export function Cell({ x, y, d, index, epoch, durMs, state, celebrate, onTap }: 
             />
           </span>
         </span>
+        {identify && state.tap > 0 && (
+          <span className="found-ring" style={{ width: px(to.size) + 14, height: px(to.size) + 14 }} />
+        )}
         {celebrate && <span className="ring" />}
       </span>
       {showLabel && (
