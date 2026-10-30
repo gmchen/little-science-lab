@@ -16,6 +16,8 @@ interface Props {
   index: number
   /** Changes on reset so the opening stage label shows again. */
   epoch: number
+  /** Length of the stage transition; the name label swaps from old to new around its midpoint. */
+  durMs: number
   state: CellState
   celebrate: boolean
   onTap: () => void
@@ -27,10 +29,21 @@ function rnd(index: number, slot: number) {
   return v - Math.floor(v)
 }
 
-export function Cell({ x, y, d, index, epoch, state, celebrate, onTap }: Props) {
+/** Time the new name stays up after the swap. */
+const LABEL_HOLD_MS = 1700
+/** Transitions shorter than this are too quick to show the old and new names one after the other. */
+const LABEL_SEQUENCE_MIN_MS = 500
+/** Point in the crossfade where the new cell overtakes the old one, so the name swaps with it. */
+const CROSSFADE_SWAP = 0.6
+
+export function Cell({ x, y, d, index, epoch, durMs, state, celebrate, onTap }: Props) {
   const to = STAGES[state.stage]
   const from = STAGES[state.prev]
   const advanced = state.prev !== state.stage
+  // The old name shows first, then the new one as the cell changes. An instant change has no time
+  // for that, so it shows "old → new" at once and the text is never out of step with the cell.
+  const sequence = advanced && durMs >= LABEL_SEQUENCE_MIN_MS
+  const swapMs = sequence ? durMs * CROSSFADE_SWAP : 0
   const px = (size: number) => (d * size) / MAX_SIZE
 
   // Three wandering waypoints in any direction, plus a slight sway.
@@ -52,6 +65,10 @@ export function Cell({ x, y, d, index, epoch, state, celebrate, onTap }: Props) 
     '--float-time': `${8 + rnd(index, 21) * 6}s`,
     '--celebrate-delay': `${index * 70}ms`,
     '--label-delay': `${state.tap === 0 ? index * 60 : 0}ms`,
+    '--swap': `${swapMs}ms`,
+    '--lead': sequence ? '120ms' : '0ms',
+    '--hold': `${LABEL_HOLD_MS}ms`,
+    '--total': `${swapMs + LABEL_HOLD_MS}ms`,
     '--label-size': `${Math.max(13, Math.min(20, d * 0.13))}px`,
   } as CSSProperties
 
@@ -108,7 +125,8 @@ export function Cell({ x, y, d, index, epoch, state, celebrate, onTap }: Props) 
       </span>
       {showLabel && (
         <span key={`${epoch}-${state.tap}`} className="cell-label">
-          {to.label}
+          {sequence && <span className="lbl-from">{from.label}</span>}
+          <span className="lbl-to">{advanced && !sequence ? `${from.label} → ${to.label}` : to.label}</span>
         </span>
       )}
     </button>

@@ -3,7 +3,7 @@ import { useState } from 'react'
 /** Transformation lengths to compare; every tap also gets a short pop regardless of speed. */
 export const SPEEDS = {
   instant: { label: 'Instant', ms: 0 },
-  quick: { label: 'Quick (0.3 s)', ms: 300 },
+  quick: { label: 'Quick (0.9 s)', ms: 900 },
   slow: { label: 'Slow (2 s)', ms: 2000 },
 } as const
 
