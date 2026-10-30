@@ -1,0 +1,249 @@
+.granulo {
+  position: relative;
+  height: 100%;
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+}
+
+.marrow {
+  position: absolute;
+  inset: 0;
+}
+
+.cell {
+  position: absolute;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.cell-float {
+  position: absolute;
+  inset: 0;
+  animation: float var(--float-time) ease-in-out var(--float-delay) infinite;
+}
+
+.cell-pop {
+  position: absolute;
+  inset: 0;
+}
+
+.cell-img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Cells shrink as they mature, so the tap target stays the size of a blast. */
+.cell-pop.pop {
+  animation: pop 260ms ease-out;
+}
+
+.cell-pop.wiggle {
+  animation: wiggle 360ms ease-in-out;
+}
+
+.morph-in {
+  animation: morph-in var(--dur) ease-in-out both;
+}
+
+.morph-out {
+  animation: morph-out var(--dur) ease-in-out both;
+}
+
+@keyframes morph-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(var(--k));
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes morph-out {
+  0%,
+  35% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(var(--k));
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.14);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(-9deg) scale(1.06);
+  }
+  75% {
+    transform: rotate(9deg) scale(1.06);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(-2px);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+}
+
+.celebrate .cell-float {
+  animation:
+    float var(--float-time) ease-in-out var(--float-delay) infinite,
+    cheer 900ms ease-in-out var(--celebrate-delay) both;
+}
+
+@keyframes cheer {
+  0%,
+  100% {
+    scale: 1;
+  }
+  45% {
+    scale: 1.28;
+  }
+}
+
+.ring {
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 18px rgba(240, 177, 193, 0.9);
+  opacity: 0;
+  animation: ring 1100ms ease-out var(--celebrate-delay) both;
+  pointer-events: none;
+}
+
+@keyframes ring {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+.counter {
+  position: absolute;
+  left: max(16px, env(safe-area-inset-left));
+  top: max(12px, env(safe-area-inset-top));
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  font-size: 15px;
+  pointer-events: none;
+}
+
+.again {
+  position: absolute;
+  left: 50%;
+  bottom: 9%;
+  width: 96px;
+  height: 96px;
+  margin-left: -48px;
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  box-shadow: 0 6px 20px rgba(120, 60, 90, 0.25);
+  font-size: 54px;
+  line-height: 1;
+  color: #8b4a8c;
+  opacity: 0;
+  animation: fade-in 600ms ease-out 1.6s forwards;
+}
+
+@keyframes fade-in {
+  to {
+    opacity: 1;
+  }
+}
+
+.gear {
+  position: absolute;
+  right: max(12px, env(safe-area-inset-right));
+  bottom: max(12px, env(safe-area-inset-bottom));
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.35);
+  font-size: 26px;
+  color: rgba(91, 58, 74, 0.45);
+}
+
+.panel-backdrop {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(60, 30, 50, 0.35);
+}
+
+.panel {
+  padding: 24px 28px;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.panel h2 {
+  margin: 0 0 12px;
+  font-size: 18px;
+}
+
+.panel .row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.panel button {
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: 2px solid #e3cfe6;
+  background: #faf5fb;
+  font-size: 16px;
+}
+
+.panel button.on {
+  background: #6f3a8c;
+  border-color: #6f3a8c;
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cell-float {
+    animation: none;
+  }
+}

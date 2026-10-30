@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" viewBox="42.173 36.837 384 384" width="384" height="384"><defs><style id="style1483">
+    .cell { fill: #cfccef; stroke: none; }
+    .nucleus { fill: #6f3a8c; stroke: none; }
+    .label { fill: #222; font-family: Arial, Helvetica, sans-serif; font-size: 22px; text-anchor: middle; }
+</style>
+    <filter inkscape:label="Film Grain" inkscape:menu="Image Effects" inkscape:menu-tooltip="Adds a small scale graininess" style="color-interpolation-filters:sRGB;" id="filter15856" x="0" y="0" width="1" height="1">
+      <feTurbulence type="fractalNoise" numOctaves="3" baseFrequency="1" seed="0" result="result0" id="feTurbulence15846" />
+      <feColorMatrix result="result4" values="0" type="saturate" id="feColorMatrix15848" />
+      <feComposite in="SourceGraphic" in2="result4" operator="arithmetic" k1="1.25" k2="0.5" k3="0.5" result="result2" id="feComposite15850" />
+      <feBlend result="result5" mode="normal" in="result2" in2="SourceGraphic" id="feBlend15852" />
+      <feComposite in="result5" in2="SourceGraphic" operator="in" result="result3" id="feComposite15854" />
+    </filter>
+    </defs><circle style="fill:#aed0ef;stroke:none;stroke-width:3.16724;stroke-miterlimit:4;stroke-dasharray:none;fill-opacity:1" id="path955" cx="234.17332" cy="228.83707" r="192" />
+  <g id="stage_myeloblast-0" transform="matrix(2.8009827,0,0,2.8009827,-170.5006,-74.575518)">
+    <path id="nucleus_myeloblast-9" d="m 116.32494,51.277743 c 27.12602,-9.946131 78.87404,25.380511 82.99117,53.537027 2.13071,14.57171 -1.76126,46.4353 -20.72593,58.30356 -19.43977,12.16558 -34.32015,11.02144 -53.1906,6.41461 C 99.646258,163.24578 84.048173,139.89917 81.595587,110.4464 79.395693,84.02817 88.598585,61.443997 116.32494,51.277743 Z" class="nucleus" sodipodi:nodetypes="ssssss" style="fill:#6a2fa1;fill-opacity:1" />
+    <path id="path15844" d="m 116.32494,51.277743 c 27.12602,-9.946131 78.87404,25.380511 82.99117,53.537027 2.13071,14.57171 -1.76126,46.4353 -20.72593,58.30356 -19.43977,12.16558 -34.32015,11.02144 -53.1906,6.41461 C 99.646258,163.24578 84.048173,139.89917 81.595587,110.4464 79.395693,84.02817 88.598585,61.443997 116.32494,51.277743 Z" class="nucleus" sodipodi:nodetypes="ssssss" style="fill:#6a2fa1;fill-opacity:1;filter:url(#filter15856);opacity:0.25" />
+  </g>
+  <path id="path15844-0" d="m 270.84274,301.95522 c 33.47098,0.60031 33.53916,25.00787 32.24082,41.05742 -0.40799,15.66175 -26.92187,27.42983 -40.11408,23.25715 -13.47446,-3.56313 -20.06503,-16.63543 -21.34828,-33.3273 -1.151,-14.97209 13.61502,-31.26717 29.22154,-30.98727 z" class="nucleus" sodipodi:nodetypes="sccss" style="opacity:0.07184466;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.544539" />
+  </svg>
