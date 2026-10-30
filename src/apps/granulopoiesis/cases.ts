@@ -74,7 +74,9 @@ export function loadCases(scenariosText: string, vignettesText: string): CaseLib
       seen.add(id)
       scenarios.push({
         id,
-        name: r.display_name || id,
+        // The diagnosis shown with the marrow: `diagnosis_display` when given, else `display_name`.
+        name: r.diagnosis_display || r.display_name || id,
+        context: r.clinical_context || undefined,
         weight,
         age,
         cellularity,

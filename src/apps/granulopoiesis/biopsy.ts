@@ -27,7 +27,7 @@ export const expectedCellularity = (age: number) => clamp(100 - age, 20, 90)
 /** How far from the expected value still counts as normocellular for age. */
 const FOR_AGE_TOLERANCE = 15
 /** Blasts are reported once they make up at least this share of the shown cells. */
-const REPORT_BLASTS_FROM = 20
+const REPORT_BLASTS_FROM = 30
 
 /** Split `n` cells among the weights, giving leftovers to the largest remainders. */
 function allocate(weights: number[], n: number): number[] {
@@ -43,7 +43,11 @@ function allocate(weights: number[], n: number): number[] {
   return counts
 }
 
-const fillAge = (template: string, age: number) => template.replace(/\{age\}/g, String(age))
+/** Fill in `{age}`, and make a leading "A" agree with it ("An 8-year-old", "An 18-year-old", "A 7-year-old"). */
+const fillAge = (template: string, age: number) => {
+  const an = /^(8|11$|18$)/.test(String(age))
+  return template.replace(/^A (?=\{age\})/, an ? 'An ' : 'A ').replace(/\{age\}/g, String(age))
+}
 
 export function generateBiopsy(seed: number): Biopsy {
   const rand = mulberry32(seed)

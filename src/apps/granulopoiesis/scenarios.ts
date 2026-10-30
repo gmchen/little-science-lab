@@ -10,7 +10,10 @@ import type { Range } from './rng'
  */
 export interface Scenario {
   id: string
+  /** The diagnosis as a pathology report would word it; this is what the marrow screen shows. */
   name: string
+  /** Short label for the case as an editor sees it, e.g. "AML, new diagnosis (adult)". Not shown in the game. */
+  context?: string
   /** Relative chance of being drawn. A design preference, not disease prevalence. */
   weight: number
   /** Patient age in years. */
