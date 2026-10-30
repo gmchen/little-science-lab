@@ -13,11 +13,13 @@ interface Props {
   /** Start the biopsy with this seed; the current seed replays it. */
   onStart: (seed: number) => void
   onNew: () => void
+  introOn: boolean
+  onIntro: (on: boolean) => void
   onExit: () => void
 }
 
 /** Settings live behind a press-and-hold so a toddler's taps can't reach them. */
-export function ParentPanel({ open, onOpen, onClose, speed, onSpeed, seed, onStart, onNew, onExit }: Props) {
+export function ParentPanel({ open, onOpen, onClose, speed, onSpeed, seed, onStart, onNew, introOn, onIntro, onExit }: Props) {
   const timer = useRef<number>(0)
   const cancel = () => window.clearTimeout(timer.current)
   const [typed, setTyped] = useState('')
@@ -50,6 +52,15 @@ export function ParentPanel({ open, onOpen, onClose, speed, onSpeed, seed, onSta
                   {SPEEDS[id].label}
                 </button>
               ))}
+            </div>
+            <h2>Case introduction</h2>
+            <div className="row">
+              <button className={introOn ? 'on' : ''} onClick={() => onIntro(true)}>
+                Show clinical vignette
+              </button>
+              <button className={introOn ? '' : 'on'} onClick={() => onIntro(false)}>
+                Skip to the marrow
+              </button>
             </div>
             <h2>Biopsy #{seed}</h2>
             <div className="row">

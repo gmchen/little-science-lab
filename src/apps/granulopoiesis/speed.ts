@@ -33,3 +33,25 @@ export function useSpeed(): [SpeedId, (s: SpeedId) => void] {
   }
   return [speed, set]
 }
+
+const INTRO_KEY = 'little-science-lab.granulopoiesis.caseIntro'
+
+/** Whether each new biopsy opens with its clinical vignette (on) or goes straight to the marrow (off). */
+export function useIntroSetting(): [boolean, (on: boolean) => void] {
+  const [on, setOn] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(INTRO_KEY) !== 'off'
+    } catch {
+      return true
+    }
+  })
+  const set = (next: boolean) => {
+    setOn(next)
+    try {
+      localStorage.setItem(INTRO_KEY, next ? 'on' : 'off')
+    } catch {
+      // ignore
+    }
+  }
+  return [on, set]
+}

@@ -43,3 +43,20 @@ npm run build      # outputs dist/
 ```
 
 then test with Airplane Mode before relying on it.
+
+## Cases (editable data)
+
+Each biopsy starts with a one-line clinical history ("Examine bone marrow" button; tap anywhere to
+continue), then shows the marrow with the diagnosis, cellularity and a morphology cue pinned at the top.
+The cases come from two CSV files you can edit in Excel, in `src/apps/granulopoiesis/data/`:
+
+- `marrow_scenarios.csv` — one row per diagnosis: draw weight, age and cellularity ranges, the relative
+  weight of each of the six stages, a morphology note. Optional columns: `cellularity_from_age` (TRUE =
+  cellularity follows age, for normal marrow) and `blast_pct_min/max/step` (draws the blast share
+  separately from cellularity, as for AML).
+- `marrow_vignettes.csv` — one row per clinical one-liner, tied to a `scenario_id`, with optional age
+  limits. `{age}` in the text is replaced with the generated age.
+
+Save as CSV from Excel (not .xlsx). The files are checked when the app loads: bad rows are skipped and
+listed in the browser console as `[case library] ...`. The stage percentages are illustrative, not a full
+marrow differential. A seed always reproduces the same case, vignette and layout.
