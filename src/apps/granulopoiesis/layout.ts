@@ -291,28 +291,30 @@ function makeFat(rand: Rand, w: number, h: number, d: number, cellularity: numbe
   const coverage = Math.max(0.02, MAX_FAT_COVERAGE * (1 - cellularity / 100))
   const target = coverage * w * h
   // Real fat cells are ~3x a blast's width; shown nearer 1.3x so the cells stay big enough to tap and there are plenty of them.
-  const baseR = d * (0.3 + ((age - 20) / 60) * 0.08)
+  // Never smaller than the biggest myeloid cell (the promyelocyte), whose diameter is `d`.
+  const minR = d * 0.5
+  const baseR = d * (0.66 + ((age - 20) / 60) * 0.1)
   const fat: Adipocyte[] = []
   let area = 0
   // Largest first: fill each size until it stops fitting, then step down to smaller ones that fill
   // the gaps, until the target coverage is reached.
-  for (let scale = 1.2; scale > 0.4 && area < target; scale *= 0.88) {
+  for (let scale = 1.0; baseR * scale >= minR * 0.97 && area < target; scale *= 0.94) {
     let fails = 0
-    while (fails < 6 && area < target) {
+    while (fails < 4 && area < target) {
       // Don't let one large cell overshoot a small remaining target.
       const left = Math.sqrt((target - area) / Math.PI)
-      const r = Math.min(baseR * scale * (0.9 + rand() * 0.2), Math.max(left * 1.3, baseR * 0.3))
+      const r = Math.max(minR, Math.min(baseR * scale * (0.9 + rand() * 0.2), Math.max(left * 1.3, minR)))
       // Early cells get random breathing room; later, smaller ones sit snugly. Taking the spot whose
       // room is closest to a random target keeps the fat from all snuggling into the same clumps.
       const wanted = area < target * 0.5 ? rand() * r * 0.35 : 0
       let best: Adipocyte | null = null
       let bestOff = Infinity
-      for (let i = 0; i < 24; i++) {
+      for (let i = 0; i < 150; i++) {
         const x = r + gap + rand() * (w - 2 * (r + gap))
         const y = r + gap + rand() * (h - 2 * (r + gap))
         let clear = Math.min(x - r - gap, y - r - gap, w - x - r - gap, h - y - r - gap)
         for (const f of fat) clear = Math.min(clear, Math.hypot(x - f.x, y - f.y) - f.r - r - gap)
-        for (const c of cells) clear = Math.min(clear, Math.hypot(x - c.x, y - c.y) - r - d * 0.5)
+        for (const c of cells) clear = Math.min(clear, Math.hypot(x - c.x, y - c.y) - r - d * 0.46)
         if (clear < -0.5 || Math.abs(clear - wanted) >= bestOff) continue
         clear = Math.min(clear, distToBone({ x, y }, bone) - r - gap)
         if (clear < -0.5) continue
@@ -341,7 +343,7 @@ export function makeLayout(w: number, h: number, biopsy: Biopsy): MarrowLayout {
   const cellSeed = Math.floor(rand() * 1e9)
   const bone = pieces.map((p) => p.path)
 
-  // Cells first, spread evenly among the bone; the fat then fills the space around them. If they
+  // Cells first, in patches among the bone; the fat then fills the space around them. If they
   // don't all fit, they shrink a little and try again.
   const minD = 56
   let d = Math.max(90, Math.min(190, short * 0.23))
@@ -350,12 +352,22 @@ export function makeLayout(w: number, h: number, biopsy: Biopsy): MarrowLayout {
     const cr = mulberry32(cellSeed + attempt)
     const pad = d * 0.55
     const placed: Point[] = []
+    // Cells gather in a few patches of hematopoietic tissue, leaving open space for the fat.
+    const patches = Array.from({ length: Math.max(2, Math.round(want / 4)) }, () => ({
+      x: pad + cr() * (w - 2 * pad),
+      y: pad + cr() * (h - 2 * pad),
+    }))
+    const gauss = () => cr() + cr() + cr() - 1.5
     while (placed.length < want) {
-      // Best-candidate sampling spreads the cells out evenly.
       let pick: Point | null = null
       let pickDist = 0
       for (let i = 0; i < 40; i++) {
-        const p = { x: pad + cr() * (w - 2 * pad), y: pad + cr() * (h - 2 * pad) }
+        let p = { x: pad + cr() * (w - 2 * pad), y: pad + cr() * (h - 2 * pad) }
+        if (cr() < 0.7) {
+          const c = patches[Math.floor(cr() * patches.length)]
+          p = { x: c.x + gauss() * d * 1.6, y: c.y + gauss() * d * 1.6 }
+          if (p.x < pad || p.y < pad || p.x > w - pad || p.y > h - pad) continue
+        }
         if (distToBone(p, pieces) < d * 0.5) continue
         const nearest = placed.reduce((m, c) => Math.min(m, Math.hypot(p.x - c.x, p.y - c.y)), Infinity)
         if (nearest > pickDist) {
