@@ -14,26 +14,48 @@ interface Props {
   y: number
   d: number
   index: number
+  /** Changes on reset so the opening stage label shows again. */
+  epoch: number
   state: CellState
   celebrate: boolean
   onTap: () => void
 }
 
-export function Cell({ x, y, d, index, state, celebrate, onTap }: Props) {
+/** Deterministic pseudo-random value in [0, 1) for a cell and a slot, so each cell keeps its own look. */
+function rnd(index: number, slot: number) {
+  const v = Math.sin(index * 12.9898 + slot * 78.233) * 43758.5453
+  return v - Math.floor(v)
+}
+
+export function Cell({ x, y, d, index, epoch, state, celebrate, onTap }: Props) {
   const to = STAGES[state.stage]
   const from = STAGES[state.prev]
   const advanced = state.prev !== state.stage
   const px = (size: number) => (d * size) / MAX_SIZE
+
+  // Three wandering waypoints in any direction, plus a slight sway.
+  const reach = d * 0.06
+  const drift: Record<string, string> = {}
+  for (let k = 0; k < 3; k++) {
+    drift[`--x${k}`] = `${((rnd(index, k * 3) - 0.5) * 2 * reach).toFixed(1)}px`
+    drift[`--y${k}`] = `${((rnd(index, k * 3 + 1) - 0.5) * 2 * reach).toFixed(1)}px`
+    drift[`--a${k}`] = `${((rnd(index, k * 3 + 2) - 0.5) * 12).toFixed(1)}deg`
+  }
 
   const style = {
     left: x - d / 2,
     top: y - d / 2,
     width: d,
     height: d,
-    '--float-delay': `${-((index * 1.7) % 6)}s`,
-    '--float-time': `${4.5 + ((index * 0.7) % 2.5)}s`,
+    ...drift,
+    '--float-delay': `${-rnd(index, 20) * 10}s`,
+    '--float-time': `${8 + rnd(index, 21) * 6}s`,
     '--celebrate-delay': `${index * 70}ms`,
+    '--label-delay': `${state.tap === 0 ? index * 60 : 0}ms`,
+    '--label-size': `${Math.max(13, Math.min(20, d * 0.13))}px`,
   } as CSSProperties
+
+  const showLabel = state.tap === 0 || advanced
 
   return (
     <button
@@ -51,37 +73,44 @@ export function Cell({ x, y, d, index, state, celebrate, onTap }: Props) {
           key={state.tap}
           className={`cell-pop${state.tap > 0 ? (state.stage === LAST_STAGE && !advanced ? ' wiggle' : ' pop') : ''}`}
         >
-          {advanced && (
+          <span className="cell-rot" style={{ rotate: `${Math.round(rnd(index, 30) * 360)}deg` }}>
+            {advanced && (
+              <img
+                className="cell-img morph-out"
+                src={from.src}
+                alt=""
+                draggable={false}
+                style={
+                  {
+                    width: px(from.size),
+                    height: px(from.size),
+                    '--k': to.size / from.size,
+                  } as CSSProperties
+                }
+              />
+            )}
             <img
-              className="cell-img morph-out"
-              src={from.src}
+              className={`cell-img${advanced ? ' morph-in' : ''}`}
+              src={to.src}
               alt=""
               draggable={false}
               style={
                 {
-                  width: px(from.size),
-                  height: px(from.size),
-                  '--k': to.size / from.size,
+                  width: px(to.size),
+                  height: px(to.size),
+                  '--k': from.size / to.size,
                 } as CSSProperties
               }
             />
-          )}
-          <img
-            className={`cell-img${advanced ? ' morph-in' : ''}`}
-            src={to.src}
-            alt=""
-            draggable={false}
-            style={
-              {
-                width: px(to.size),
-                height: px(to.size),
-                '--k': from.size / to.size,
-              } as CSSProperties
-            }
-          />
+          </span>
         </span>
         {celebrate && <span className="ring" />}
       </span>
+      {showLabel && (
+        <span key={`${epoch}-${state.tap}`} className="cell-label">
+          {to.label}
+        </span>
+      )}
     </button>
   )
 }

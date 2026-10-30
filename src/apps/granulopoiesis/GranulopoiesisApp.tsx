@@ -31,6 +31,7 @@ export function GranulopoiesisApp({ onExit }: ActivityProps) {
   const [cells, setCells] = useState<CellState[]>([])
   const [speed, setSpeed] = useSpeed()
   const [panelOpen, setPanelOpen] = useState(false)
+  const [epoch, setEpoch] = useState(0)
 
   // Keep each cell's progress when the screen is resized or rotated and the layout changes.
   const count = layout?.cells.length ?? 0
@@ -58,6 +59,7 @@ export function GranulopoiesisApp({ onExit }: ActivityProps) {
 
   const reset = () => {
     setCells(fresh(count))
+    setEpoch((e) => e + 1)
     setPanelOpen(false)
   }
 
@@ -77,6 +79,7 @@ export function GranulopoiesisApp({ onExit }: ActivityProps) {
               <Cell
                 key={i}
                 index={i}
+                epoch={epoch}
                 x={p.x}
                 y={p.y}
                 d={layout.d}

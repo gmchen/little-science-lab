@@ -8,19 +8,22 @@ import neutrophil from './cells/neutrophil.svg'
 export interface Stage {
   label: string
   src: string
-  /** Diameter of the cell in artwork units; relative sizes match the physical toy. */
+  /**
+   * Typical cell diameter in micrometers (mid-range of published smear values:
+   * Taylor & Doty clinical hematology atlas, histologyguide.com). The promyelocyte is the largest.
+   */
   size: number
 }
 
 export const STAGES: Stage[] = [
-  { label: 'Blast', src: blast, size: 384 },
-  { label: 'Promyelocyte', src: promyelocyte, size: 384 },
-  { label: 'Myelocyte', src: myelocyte, size: 288 },
-  { label: 'Metamyelocyte', src: metamyelocyte, size: 288 },
-  { label: 'Band', src: band, size: 192 },
-  { label: 'Neutrophil', src: neutrophil, size: 192 },
+  { label: 'Blast', src: blast, size: 16 },
+  { label: 'Promyelocyte', src: promyelocyte, size: 19 },
+  { label: 'Myelocyte', src: myelocyte, size: 15 },
+  { label: 'Metamyelocyte', src: metamyelocyte, size: 14 },
+  { label: 'Band', src: band, size: 13 },
+  { label: 'Neutrophil', src: neutrophil, size: 12 },
 ]
 
 export const LAST_STAGE = STAGES.length - 1
-/** Largest artwork diameter; the tap target of every cell is sized to this. */
-export const MAX_SIZE = 384
+/** Largest stage diameter; the tap target of every cell is sized to this. */
+export const MAX_SIZE = Math.max(...STAGES.map((s) => s.size))
