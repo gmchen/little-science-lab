@@ -7,7 +7,9 @@ export function Marrow({ layout, w, h }: { layout: MarrowLayout; w: number; h: n
       <rect width={w} height={h} fill="#fbe9dc" />
       {layout.adipocytes.map((a, i) => (
         <g key={i}>
-          <circle cx={a.x} cy={a.y} r={a.r} fill="#fffdf9" stroke="#f1d5c9" strokeWidth={4} />
+          {/* Thin outline, then the white body; the round-joined strokes are what round the corners. */}
+          <path d={a.path} fill="#f1d5c9" stroke="#f1d5c9" strokeWidth={a.round * 2 + 3} strokeLinejoin="round" />
+          <path d={a.path} fill="#fffdf9" stroke="#fffdf9" strokeWidth={Math.max(a.round * 2, 0.1)} strokeLinejoin="round" />
           <path
             d={`M${a.x - a.r * 0.62},${a.y - a.r * 0.35} A${a.r * 0.7},${a.r * 0.7} 0 0 1 ${a.x + a.r * 0.1},${a.y - a.r * 0.7}`}
             fill="none"

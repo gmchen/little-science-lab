@@ -1,9 +1,9 @@
 scenario_id,display_name,draw_weight,age_min,age_max,cellularity_min_pct,cellularity_max_pct,cellularity_step,blast_wt,promyelo_wt,myelo_wt,metamyelo_wt,band_wt,neutrophil_wt,key_morphology,caveat,cellularity_from_age,blast_pct_min,blast_pct_max,blast_pct_step
-normal,Normal marrow,18,5,85,20,90,10,2,6,22,28,22,20,Age-appropriate cellularity; complete granulocytic maturation,Compute cellularity from age rather than selecting entire range uniformly; other marrow lineages omitted,TRUE,,,
-aml,Acute myeloid leukemia,30,2,90,30,100,10,75,5,5,5,5,5,Expanded blasts; reduced maturation,"Rendered blast share is illustrative, not a diagnostic blast percentage across all nucleated cells",,30,90,10
-cml_cp,"CML, chronic phase",16,20,85,80,100,10,3,7,33,27,18,12,Granulocytic hyperplasia with full maturation and left shift,Basophilia and megakaryocyte changes not depicted,,,,
+normal,Normal marrow,25,5,85,20,90,10,2,6,22,28,22,20,Age-appropriate cellularity; complete granulocytic maturation,Age-adjust cellularity rather than uniform sampling of full range; depicted stages exclude erythroid and other lineages,TRUE,,,
+aml,Acute myeloid leukemia,30,2,90,30,100,10,75,5,5,5,5,5,Expanded blasts; reduced maturation,Blast-rich game preset; illustrated blast fraction is NOT a clinical marrow blast percentage (which is based on all nucleated cells); classification-specific exceptions to 20% threshold exist,,30,90,10
+cml_cp,"CML, chronic phase",15,20,85,80,100,10,3,7,33,27,18,12,Granulocytic hyperplasia with full maturation and left shift,Basophilia and megakaryocyte changes not depicted,,,,
 aplastic,Aplastic anemia,7,8,80,0,20,10,2,5,20,25,25,23,Markedly hypocellular; fat predominates,Residual cell-stage distribution is highly variable; not diagnostically specific,,,,
 post_chemo,Post-chemotherapy aplasia,8,5,80,0,20,10,5,10,20,25,20,20,Treatment-related hypocellularity and reduced hematopoiesis,"Depends on drug, dose, and timing",,,,
-recovery,Recovering marrow after chemotherapy,9,5,80,20,80,10,3,10,30,27,20,10,Regenerating granulopoiesis; left shift possible,Pattern and cellularity are variable,,,,
-gcsf,G-CSF effect,8,5,85,50,100,10,2,8,27,28,20,15,Granulocytic hyperplasia with left shift,Not specific for G-CSF; recent exposure provides context,,,,
-scn,Severe congenital neutropenia,4,0,20,30,90,10,5,45,40,5,3,2,Promyelocyte/myelocyte-stage maturation arrest; few mature neutrophils,Pattern differs by cause and treatment; game allows differentiation despite biological arrest,,,,
+recovery,Recovering marrow after chemotherapy,8,5,80,20,80,10,3,10,30,27,20,10,Regenerating granulopoiesis; left shift possible,Pattern and cellularity are variable,,,,
+gcsf,G-CSF effect,6,5,85,50,100,10,2,8,27,28,20,15,Granulocytic hyperplasia with left shift,Not specific for G-CSF; recent exposure provides context,,,,
+scn,Severe congenital neutropenia,1,0,20,30,90,10,5,45,40,5,3,2,Promyelocyte/myelocyte-stage maturation arrest; few mature neutrophils,Pattern differs by cause and treatment; game allows differentiation despite biological arrest,,,,

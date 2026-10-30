@@ -1,17 +1,36 @@
 vignette_id,scenario_id,age_min_override,age_max_override,clinical_vignette_template,morphology_cue_template,editor_note
-normal_1,normal,20,65,A {age}-year-old healthy donor undergoes a bone marrow evaluation.,Age-appropriate cellularity with granulocytes at all maturation stages.,"For a normal marrow biopsy, specify why obtained if desired"
-normal_2,normal,5,18,A {age}-year-old is undergoing a marrow evaluation with otherwise reassuring blood counts.,"Cellularity is appropriate for age, with a complete range of granulocytic maturation.",Avoid implying all clinically evaluated children are healthy
-aml_1,aml,30,85,A {age}-year-old presents with fatigue and bruising; circulating blasts are identified.,Increased blasts with reduced normal granulocytic maturation.,Use leukemia classification nuance in parent notes if needed
-aml_2,aml,2,17,"A {age}-year-old develops pallor and easy bruising, and a blood smear shows blasts.",Blast-rich marrow with reduced normal maturation.,Pediatric AML example
-cml_1,cml_cp,20,80,A {age}-year-old is evaluated for marked leukocytosis and splenomegaly.,Marked granulocytic proliferation with full maturation and a left shift.,BCR::ABL1 confirmation is outside this visual model
-cml_2,cml_cp,25,75,Routine bloodwork in a {age}-year-old reveals persistent neutrophilic leukocytosis.,Hypercellular marrow with increased intermediate granulocytic precursors.,The clinical history alone is nonspecific
-aplastic_1,aplastic,10,75,"A {age}-year-old presents with fatigue, infections, and pancytopenia.",Markedly hypocellular marrow with abundant fat spaces.,Exclude other causes clinically; marrow appearance alone insufficient
-aplastic_2,aplastic,5,70,A {age}-year-old with persistent pancytopenia undergoes a bone marrow biopsy.,Very sparse hematopoiesis and extensive fatty replacement.,
-post_chemo_1,post_chemo,18,80,A {age}-year-old undergoes marrow examination two weeks after cytotoxic chemotherapy.,Markedly depleted hematopoiesis after treatment.,Timing is illustrative and drug-dependent
-post_chemo_2,post_chemo,2,17,A {age}-year-old receives intensive chemotherapy and has prolonged cytopenias.,Sparse residual marrow cells with prominent fat spaces.,Pediatric treatment-effect example
-recovery_1,recovery,20,80,A {age}-year-old has rising neutrophil counts following chemotherapy.,Regenerating marrow with increased immature granulocytic forms.,
-recovery_2,recovery,5,70,A {age}-year-old is recovering blood counts after a period of marrow suppression.,"Granulocytic maturation is returning, often with a left shift.",
-gcsf_1,gcsf,20,80,A {age}-year-old recently received filgrastim after chemotherapy.,"Granulocytic hyperplasia and a left shift, consistent with growth-factor effect.",
-gcsf_2,gcsf,18,85,A {age}-year-old receives pegfilgrastim as supportive care during cancer treatment.,Expanded granulopoiesis with abundant maturing precursors.,
-scn_1,scn,1,15,A {age}-year-old with recurrent bacterial infections is evaluated for severe persistent neutropenia.,Granulocytic maturation is reduced beyond the promyelocyte/myelocyte stage.,
-scn_2,scn,1,12,A {age}-year-old has recurrent infections and profound neutropenia from early childhood.,"Early granulocytic precursors predominate, with few mature forms.",
+normal_1,normal,20,65,A {age}-year-old volunteer is being evaluated as a potential bone marrow donor.,Age-appropriate cellularity with a range of maturing granulocytes.,Normal donor evaluation is context-specific
+normal_2,normal,5,17,A {age}-year-old undergoes marrow evaluation for persistent but otherwise unexplained mild blood-count abnormalities.,Age-appropriate cellularity and a complete granulocytic maturation spectrum.,A reassuring marrow does not establish cause of abnormal CBC
+normal_3,normal,30,80,A {age}-year-old with previously unexplained mild cytopenias undergoes a bone marrow biopsy.,Preserved granulocytic maturation with no prominent excess of blasts.,Simplified normal-appearing sample; other lineages omitted
+normal_4,normal,18,75,A {age}-year-old is evaluated after an incidental abnormal blood count that has since normalized.,Age-appropriate marrow fat and orderly granulocytic maturation.,Vignette does not assert why counts normalized
+normal_5,normal,20,75,A {age}-year-old undergoes marrow examination during follow-up of a previously treated hematologic condition.,No evident blast expansion; granulocytes show a full range of maturation.,Normal-appearing morphology alone does not establish remission
+aml_1,aml,40,85,A {age}-year-old reports fatigue and easy bruising; peripheral blood shows circulating blasts.,Increased blasts with reduced normal granulocytic maturation.,
+aml_2,aml,2,17,A {age}-year-old develops pallor and bruises easily; blasts are identified on the blood smear.,Blast-rich marrow with reduced normal maturation.,Pediatric AML presentation
+aml_3,aml,35,85,Routine bloodwork in a {age}-year-old reveals new pancytopenia and circulating blasts.,An expanded blast population dominates the illustrated granulocytic compartment.,
+aml_4,aml,18,75,A {age}-year-old presents with fever and severe neutropenia; review of the blood film finds blasts.,Marked expansion of immature blasts with diminished mature granulocytes.,
+aml_5,aml,40,85,"A {age}-year-old develops gingival bleeding and fatigue, with new thrombocytopenia and circulating blasts.",Blast-rich marrow with little normal granulocytic maturation.,Do not infer monocytic lineage from current artwork
+aml_6,aml,20,75,"A {age}-year-old presents with marked leukocytosis, anemia, and numerous circulating blasts.",An expanded blast population with suppressed normal maturation.,
+aml_7,aml,45,85,A {age}-year-old previously treated with cytotoxic chemotherapy develops new cytopenias and circulating blasts.,Blast expansion in a marrow with variable cellularity.,Prior therapy alone does not define a specific AML genetic category
+aml_8,aml,2,17,"A {age}-year-old with recurrent fever and fatigue is found to have anemia, thrombocytopenia, and circulating blasts.",An increased blast population and reduced late granulocytic forms.,Additional pediatric AML vignette
+cml_cp_1,cml_cp,25,75,A {age}-year-old is evaluated for markedly elevated white blood cells and splenomegaly.,Granulocytic hyperplasia with a left shift and preserved maturation.,Requires molecular confirmation; basophilia not depicted
+cml_cp_2,cml_cp,20,80,Routine bloodwork in a {age}-year-old reveals persistent leukocytosis with immature granulocytes.,Hypercellular marrow with many myelocytes and metamyelocytes.,
+cml_cp_3,cml_cp,30,75,A {age}-year-old reports early satiety; examination reveals splenomegaly and bloodwork shows leukocytosis.,Expanded granulopoiesis with the full maturation spectrum.,
+cml_cp_4,cml_cp,25,75,A {age}-year-old has incidental leukocytosis on a preoperative blood count; the smear shows a granulocytic left shift.,"Marked granulocytic proliferation, particularly intermediate precursors.",
+cml_cp_5,cml_cp,25,80,A {age}-year-old presents with fatigue and abdominal fullness; the CBC shows leukocytosis with granulocytic precursors.,Full spectrum of myeloid maturation in a hypercellular marrow.,
+aplastic_1,aplastic,10,75,"A {age}-year-old presents with fatigue, recurrent infections, and pancytopenia.",Very sparse hematopoiesis with extensive fat spaces.,Diagnosis needs additional clinical workup
+aplastic_2,aplastic,5,65,A {age}-year-old with persistent pancytopenia undergoes a bone marrow biopsy.,Markedly hypocellular marrow with only scattered hematopoietic cells.,
+aplastic_3,aplastic,15,70,A {age}-year-old develops easy bruising and recurrent oral infections; blood counts are low in all three lineages.,Extensive fatty replacement and scant residual granulopoiesis.,
+aplastic_4,aplastic,10,70,"A {age}-year-old is referred for severe anemia, thrombocytopenia, and neutropenia without circulating blasts.",Marked hypocellularity with only rare maturing granulocytes.,
+post_chemo_1,post_chemo,18,80,A {age}-year-old undergoes marrow examination two weeks after intensive cytotoxic chemotherapy.,Treatment-associated hypocellularity with very few residual myeloid cells.,Timing illustrative and regimen-dependent
+post_chemo_2,post_chemo,2,17,A {age}-year-old has persistent cytopenias after intensive chemotherapy.,Markedly depleted hematopoiesis with prominent fat spaces.,Pediatric example
+post_chemo_3,post_chemo,35,80,A {age}-year-old with treated acute leukemia undergoes an early post-induction marrow biopsy.,Sparse marrow cellularity following treatment.,Cannot infer leukemia clearance from cellularity alone
+post_chemo_4,post_chemo,20,75,A {age}-year-old remains profoundly neutropenic after a recent course of cytotoxic chemotherapy.,Very limited residual granulopoiesis in a markedly hypocellular sample.,
+recovery_1,recovery,20,80,A {age}-year-old has rising neutrophil counts after a period of chemotherapy-related pancytopenia.,Regenerating granulopoiesis with a variable left shift.,
+recovery_2,recovery,5,70,A {age}-year-old is recovering blood counts several weeks after cytotoxic treatment.,Reappearing granulocytic precursors and increasing late forms.,
+recovery_3,recovery,18,75,A {age}-year-old returns for marrow evaluation as blood counts begin to recover after treatment.,Recovering hematopoiesis with maturing granulocytes at several stages.,
+recovery_4,recovery,18,80,A {age}-year-old recovering from intensive chemotherapy now has a rising absolute neutrophil count.,Regenerating marrow with increased intermediate granulocytic forms.,
+gcsf_1,gcsf,18,80,A {age}-year-old recently received filgrastim after chemotherapy.,"Expanded granulopoiesis with a left shift, compatible with G-CSF effect.",
+gcsf_2,gcsf,18,80,A {age}-year-old received pegfilgrastim during a recent chemotherapy cycle.,Granulocytic hyperplasia with numerous maturing precursors.,
+gcsf_3,gcsf,20,75,A {age}-year-old is undergoing peripheral blood stem-cell mobilization after several days of filgrastim.,Granulocytic proliferation and a broad maturation spectrum.,
+scn_1,scn,1,15,A {age}-year-old with recurrent bacterial infections is evaluated for persistent severe neutropenia.,"Promyelocytes and myelocytes predominate, with few mature neutrophils.",Pattern varies by cause and treatment
+scn_2,scn,1,12,A {age}-year-old has had profound neutropenia and recurrent infections since early childhood.,Maturation is markedly reduced beyond early granulocytic precursor stages.,

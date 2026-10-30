@@ -209,8 +209,8 @@ export function GranulopoiesisApp({ onExit }: ActivityProps) {
           )}
       </div>
       {done && againReady && (
-        <button className="again" aria-label="New biopsy" onClick={() => start(newSeed())}>
-          ↻
+        <button className="next-case" aria-label="Next case" onClick={() => start(newSeed())}>
+          Next case <span className="next-case-arrow">→</span>
         </button>
       )}
       <ParentPanel

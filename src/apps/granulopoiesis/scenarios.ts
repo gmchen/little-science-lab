@@ -41,12 +41,7 @@ export interface Vignette {
 }
 
 /** Tappable cells on screen, from the sparsest to the most crowded marrow. */
-export const MIN_CELLS = 8
+export const MIN_CELLS = 6
 export const MAX_CELLS = 20
-/**
- * Share of the screen covered by fat at 0 % cellularity; fat shrinks as cellularity rises. Round fat
- * cells can't tile the plane, so ~0.6 is about as full as they get.
- */
-export const MAX_FAT_COVERAGE = 0.6
 /** At least this many cells start short of neutrophil, so a biopsy never begins finished. */
 export const MIN_UNFINISHED = 3
