@@ -263,6 +263,11 @@
   margin-top: 4px;
 }
 
+.offline-status {
+  margin: 0 0 14px;
+  font-size: 16px;
+}
+
 .seed-input {
   width: 9em;
   padding: 12px 14px;

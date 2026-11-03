@@ -1,5 +1,13 @@
 import { useRef, useState } from 'react'
+import { useOfflineStatus, type OfflineStatus } from '../../offline'
 import { SPEEDS, type Mode, type SpeedId } from './speed'
+
+const OFFLINE_TEXT: Record<OfflineStatus, string> = {
+  checking: 'Checking offline copy…',
+  ready: '✓ Ready to use offline',
+  'not-ready': 'Not saved for offline yet. Stay online and reopen the app.',
+  unsupported: 'Offline mode is not available in this browser.',
+}
 
 const HOLD_MS = 800
 
@@ -25,6 +33,7 @@ export function ParentPanel({ open, onOpen, onClose, speed, onSpeed, seed, onSta
   const timer = useRef<number>(0)
   const cancel = () => window.clearTimeout(timer.current)
   const [typed, setTyped] = useState('')
+  const offline = useOfflineStatus()
 
   return (
     <>
@@ -90,6 +99,8 @@ export function ParentPanel({ open, onOpen, onClose, speed, onSpeed, seed, onSta
                 Go to #
               </button>
             </div>
+            <h2>Offline</h2>
+            <p className="offline-status">{OFFLINE_TEXT[offline]}</p>
             <div className="row">
               <button onClick={onExit}>Exit</button>
               <button onClick={onClose}>Close</button>
