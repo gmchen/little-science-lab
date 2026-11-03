@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import type { ActivityProps } from '../registry'
 import { Cell, type CellState } from './Cell'
 import { CaseScreen } from './CaseScreen'
+import { Differential, Objective, activeStage, type StageDone } from './Differential'
 import { generateBiopsy, newSeed, type Biopsy } from './biopsy'
 import { makeLayout } from './layout'
 import { Marrow } from './Marrow'
@@ -10,7 +11,16 @@ import { SPEEDS, type Mode, type SpeedId, useIntroSetting, useModeSetting, useSp
 import { ParentPanel } from './ParentPanel'
 import './granulopoiesis.css'
 
-const fresh = (stage: number): CellState => ({ stage, prev: stage, tap: 0 })
+const fresh = (stage: number): CellState => ({ stage, prev: stage, tap: 0, counted: false })
+
+const COUNTER_LABEL: Record<Mode, string> = {
+  count: 'Counted',
+  identify: 'Identified',
+  differentiate: 'Neutrophils',
+}
+
+/** How long the banner celebrates a finished cell type before the next one is asked for. */
+const STAGE_DONE_MS = 1000
 
 /** The restart button waits this long after the last cell finishes, so a tap can't land on it. */
 const AGAIN_DELAY_MS = 1800
@@ -52,7 +62,7 @@ function Report({
         <span className="report-title">Bone marrow, core biopsy</span>
         <span className="report-right">
           <span className="report-count">
-            {mode === 'identify' ? 'Identified' : 'Neutrophils'}: {progress} / {count}
+            {COUNTER_LABEL[mode]}: {progress} / {count}
           </span>
           <button className="report-info" aria-label="Read the clinical history of this case again" onClick={onInfo}>
             ⓘ Read the case again
@@ -92,6 +102,9 @@ export function GranulopoiesisApp({ onExit }: ActivityProps) {
   const [introOn, setIntroOn] = useIntroSetting()
   const [mode, setModeSetting] = useModeSetting()
   const [panelOpen, setPanelOpen] = useState(false)
+  // Set for a moment when every cell of the current type has been found.
+  const [stageDone, setStageDone] = useState<StageDone | null>(null)
+  const [nudge, setNudge] = useState<{ stage: number | undefined; n: number }>({ stage: undefined, n: 0 })
   // Bumped when the marrow is first shown for a biopsy, so the report and the stage labels play then.
   const [epoch, setEpoch] = useState(0)
   const owner = useRef<Biopsy | null>(null)
@@ -117,19 +130,43 @@ export function GranulopoiesisApp({ onExit }: ActivityProps) {
     })
   }, [])
 
-  const tap = (i: number) =>
+  const tap = (i: number) => {
+    // A tap on the wrong kind of cell in Count bobs the objective picture to point back at the target.
+    const c = cells[i]
+    const current = activeStage(cells)
+    // A tap during the celebration ends it at once and counts as usual against the next type.
+    if (stageDone) setStageDone(null)
+    if (mode === 'count' && c && !c.counted) {
+      if (c.stage !== current) {
+        setNudge((p) => ({ stage: current, n: p.n + 1 }))
+      } else if (!cells.some((x) => x !== c && !x.counted && x.stage === current)) {
+        // That was the last cell of this type; celebrate unless it also finishes the whole marrow.
+        if (cells.some((x) => !x.counted && x !== c)) {
+          setStageDone({ stage: current, total: cells.filter((x) => x.stage === current).length })
+        }
+      }
+    }
     setCells((old) =>
       old.map((c, j) => {
         if (j !== i) return c
         // Identify keeps the cell as it is and just counts the tap (which shows its name).
-        if (mode === 'identify') return { stage: c.stage, prev: c.stage, tap: c.tap + 1 }
+        if (mode === 'identify') return { ...c, prev: c.stage, tap: c.tap + 1 }
+        // Count tallies the cell only when it is the stage being counted; any other tap shows its name.
+        if (mode === 'count') return { ...c, prev: c.stage, tap: c.tap + 1, counted: c.counted || c.stage === activeStage(old) }
         const stage = Math.min(c.stage + 1, LAST_STAGE)
         // A tap during an animation jumps straight to the next stage and restarts the transition.
-        return { stage, prev: c.stage, tap: c.tap + 1 }
+        return { ...c, stage, prev: c.stage, tap: c.tap + 1 }
       }),
     )
+  }
 
   /** Move on to the marrow. The first time for a biopsy, this also starts the report and labels. */
+  useEffect(() => {
+    if (!stageDone) return
+    const t = window.setTimeout(() => setStageDone(null), STAGE_DONE_MS)
+    return () => window.clearTimeout(t)
+  }, [stageDone])
+
   const examine = () => {
     setCaseOpen(false)
     if (unseen.current) {
@@ -143,6 +180,7 @@ export function GranulopoiesisApp({ onExit }: ActivityProps) {
     if (next === seed) setCells(biopsy.stages.slice(0, cells.length).map(fresh))
     else setSeed(next)
     setPanelOpen(false)
+    setStageDone(null)
     unseen.current = true
     if (introOn) {
       setCaseOpen(true)
@@ -159,12 +197,17 @@ export function GranulopoiesisApp({ onExit }: ActivityProps) {
     setCells(biopsy.stages.slice(0, cells.length).map(fresh))
     setEpoch((e) => e + 1)
     setPanelOpen(false)
+    setStageDone(null)
   }
 
   const count = cells.length
-  // Identify counts cells tapped at least once; Differentiate counts cells that became neutrophils.
+  // Count tallies cells; Identify counts cells tapped at least once; Differentiate counts neutrophils.
   const progress =
-    mode === 'identify' ? cells.filter((c) => c.tap > 0).length : cells.filter((c) => c.stage === LAST_STAGE).length
+    mode === 'count'
+      ? cells.filter((c) => c.counted).length
+      : mode === 'identify'
+        ? cells.filter((c) => c.tap > 0).length
+        : cells.filter((c) => c.stage === LAST_STAGE).length
   const done = count > 0 && progress === count
 
   const [againReady, setAgainReady] = useState(false)
@@ -187,32 +230,41 @@ export function GranulopoiesisApp({ onExit }: ActivityProps) {
         mode={mode}
         onInfo={() => setCaseOpen(true)}
       />
-      <div className="stage" ref={stageRef}>
-        {layout && <Marrow layout={layout} w={w} h={h} />}
-        {layout &&
-          layout.cells.map((p, i) =>
-            cells[i] ? (
-              <Cell
-                key={i}
-                index={i}
-                epoch={epoch}
-                mode={mode}
-                x={p.x}
-                y={p.y}
-                d={layout.d}
-                durMs={durMs}
-                state={cells[i]}
-                celebrate={done}
-                onTap={() => tap(i)}
-              />
-            ) : null,
-          )}
-      </div>
-      {done && againReady && (
-        <button className="next-case" aria-label="Next case" onClick={() => start(newSeed())}>
-          Next case <span className="next-case-arrow">→</span>
-        </button>
+      {mode === 'count' && cells.length > 0 && (
+        <Objective cells={cells} nudge={nudge.stage === activeStage(cells) ? nudge.n : 0} flash={stageDone} />
       )}
+      <div className="work">
+        <div className="stage" ref={stageRef}>
+          {layout && <Marrow layout={layout} w={w} h={h} />}
+          {layout &&
+            layout.cells.map((p, i) =>
+              cells[i] ? (
+                <Cell
+                  key={i}
+                  index={i}
+                  epoch={epoch}
+                  mode={mode}
+                  x={p.x}
+                  y={p.y}
+                  d={layout.d}
+                  durMs={durMs}
+                  state={cells[i]}
+                  celebrate={done}
+                  target={
+                    mode === 'count' && cells.length && !stageDone ? STAGES[activeStage(cells) ?? 0].label : undefined
+                  }
+                  onTap={() => tap(i)}
+                />
+              ) : null,
+            )}
+          {done && againReady && (
+            <button className="next-case" aria-label="Next case" onClick={() => start(newSeed())}>
+              Next case <span className="next-case-arrow">→</span>
+            </button>
+          )}
+        </div>
+        {mode === 'count' && cells.length > 0 && <Differential cells={cells} flashStage={stageDone?.stage} />}
+      </div>
       <ParentPanel
         open={panelOpen}
         onOpen={() => setPanelOpen(true)}

@@ -484,3 +484,400 @@
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
+
+/* Stage and differential side by side on a wide landscape screen, stacked otherwise. */
+.work {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (orientation: landscape) and (min-width: 700px) {
+  .work {
+    flex-direction: row;
+  }
+
+  .diff {
+    width: 270px;
+    border-top: none;
+    border-left: 2px solid #ecd2c4;
+  }
+}
+
+/* Count: what to find right now */
+.objective {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  /* One height for every state: a change here resizes the marrow, which would rearrange the cells. */
+  height: 84px;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 8px max(16px, env(safe-area-inset-right)) 8px max(16px, env(safe-area-inset-left));
+  background: #6f3a8c;
+  color: #fff;
+  animation: obj-in 450ms ease-out;
+}
+
+.objective.finished {
+  justify-content: center;
+  background: #3a9d68;
+}
+
+.obj-check {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #fff;
+  color: #3a9d68;
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.obj-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.obj-icon img,
+.diff-icon img {
+  width: var(--icon);
+  height: var(--icon);
+}
+
+.obj-icon.nudge {
+  animation: bob 700ms ease-in-out;
+}
+
+.obj-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.obj-kicker {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.obj-name {
+  font-size: 32px;
+  font-weight: 800;
+}
+
+.obj-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-left: auto;
+  max-width: 45%;
+  justify-content: flex-end;
+}
+
+.obj-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+}
+
+.obj-dot.on {
+  border-color: #7be0a4;
+  background: #7be0a4;
+  animation: dot-pop 400ms ease-out;
+}
+
+.obj-count {
+  flex: none;
+  min-width: 4.5em;
+  text-align: right;
+  font-size: 20px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes obj-in {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  30% {
+    transform: translateY(-9px) scale(1.14);
+  }
+  60% {
+    transform: translateY(0) scale(1.04);
+  }
+  80% {
+    transform: translateY(-4px) scale(1.08);
+  }
+}
+
+@keyframes dot-pop {
+  0% {
+    transform: scale(0.4);
+  }
+  60% {
+    transform: scale(1.5);
+  }
+}
+
+/* Count: the differential rows */
+.diff {
+  flex: none;
+  padding: 10px max(76px, calc(env(safe-area-inset-right) + 76px)) max(10px, env(safe-area-inset-bottom))
+    max(16px, env(safe-area-inset-left));
+  background: #fff9f2;
+  border-top: 2px solid #ecd2c4;
+  overflow-y: auto;
+}
+
+@media (orientation: landscape) and (min-width: 700px) {
+  .diff {
+    padding-right: max(14px, env(safe-area-inset-right));
+  }
+}
+
+.diff-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(91, 58, 74, 0.6);
+}
+
+.diff-n {
+  margin-left: 8px;
+  letter-spacing: 0.04em;
+}
+
+.diff-rows {
+  display: grid;
+  gap: 4px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.diff-row {
+  display: grid;
+  grid-template-columns: 34px minmax(6.5em, 8.5em) 1fr 3.8em;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 8px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  transition: background 300ms, border-color 300ms;
+}
+
+@media (orientation: landscape) and (min-width: 700px) {
+  .diff-row {
+    grid-template-columns: 34px 1fr 3.8em;
+  }
+
+  .diff-bar {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
+.diff-row.active {
+  border-color: #6f3a8c;
+  background: #f3e6f8;
+}
+
+.diff-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+}
+
+.diff-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.diff-bar {
+  height: 10px;
+  border-radius: 999px;
+  background: #f0dfd2;
+  overflow: hidden;
+}
+
+.diff-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #6f3a8c;
+  transition: width 400ms ease-out;
+}
+
+.diff-row.done .diff-fill {
+  background: #3a9d68;
+}
+
+.diff-tally {
+  text-align: right;
+  font-size: 16px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #6f3a8c;
+}
+
+.diff-row.done .diff-tally {
+  color: #2b7d50;
+}
+
+.diff-row.todo .diff-tally {
+  color: rgba(91, 58, 74, 0.4);
+}
+
+/* Count: a correct tap */
+.found-ring.counted {
+  border: 4px solid #3a9d68;
+  background: rgba(58, 157, 104, 0.12);
+}
+
+.burst {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border: 4px solid #3a9d68;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: burst 650ms ease-out both;
+}
+
+@keyframes burst {
+  from {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.9);
+  }
+}
+
+.tick {
+  position: absolute;
+  right: 6%;
+  top: 6%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #3a9d68;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 800;
+  pointer-events: none;
+  animation: tick-pop 450ms cubic-bezier(0.2, 1.6, 0.4, 1) both;
+}
+
+@keyframes tick-pop {
+  from {
+    transform: scale(0);
+  }
+}
+
+/* Count: a tap on the wrong kind of cell */
+.cell-label.miss {
+  background: #fff1d6;
+  box-shadow: 0 2px 8px rgba(190, 120, 20, 0.3);
+}
+
+.cell-label small {
+  display: block;
+  font-size: 0.8em;
+  font-weight: 500;
+  color: #8a5a10;
+}
+
+/* Count: every cell of one type found */
+.objective.stage-done {
+  gap: 18px;
+  animation: stage-done-in 350ms ease-out;
+}
+
+@keyframes stage-done-in {
+  from {
+    background: #6f3a8c;
+  }
+}
+
+.obj-burst {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.stage-done .obj-check {
+  animation: tick-pop 500ms cubic-bezier(0.2, 1.6, 0.4, 1) both;
+}
+
+.spark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%;
+  background: #fff3a6;
+  opacity: 0;
+  animation: spark 700ms ease-out calc(var(--i) * 15ms) both;
+  pointer-events: none;
+}
+
+@keyframes spark {
+  from {
+    opacity: 1;
+    transform: rotate(var(--a)) translateY(-14px) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: rotate(var(--a)) translateY(-38px) scale(0.4);
+  }
+}
+
+.diff-row.just-done {
+  animation: row-done 800ms ease-out;
+}
+
+@keyframes row-done {
+  0% {
+    background: #bfe9d1;
+    transform: scale(1.04);
+  }
+  100% {
+    background: transparent;
+    transform: scale(1);
+  }
+}

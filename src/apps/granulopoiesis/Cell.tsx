@@ -8,6 +8,8 @@ export interface CellState {
   prev: number
   /** Bumped on every tap; used as a key so the animation restarts immediately. */
   tap: number
+  /** Count mode: this cell has been tallied in the differential. */
+  counted: boolean
 }
 
 interface Props {
@@ -22,6 +24,8 @@ interface Props {
   durMs: number
   state: CellState
   celebrate: boolean
+  /** Count mode: the name of the stage being counted, so a wrong tap can say what to look for. */
+  target?: string
   onTap: () => void
 }
 
@@ -38,8 +42,9 @@ const LABEL_SEQUENCE_MIN_MS = 500
 /** Point in the crossfade where the new cell overtakes the old one, so the name swaps with it. */
 const CROSSFADE_SWAP = 0.6
 
-export function Cell({ x, y, d, index, epoch, mode, durMs, state, celebrate, onTap }: Props) {
-  const identify = mode === 'identify'
+export function Cell({ x, y, d, index, epoch, mode, durMs, state, celebrate, target, onTap }: Props) {
+  // Identify and Count hide a cell's name until it is tapped; Differentiate shows each stage's name.
+  const identify = mode !== 'differentiate'
   const to = STAGES[state.stage]
   const from = STAGES[state.prev]
   const advanced = state.prev !== state.stage
@@ -77,6 +82,12 @@ export function Cell({ x, y, d, index, epoch, mode, durMs, state, celebrate, onT
 
   // Identify keeps the name hidden until the cell is tapped; the other mode shows each stage's name.
   const showLabel = identify ? state.tap > 0 : state.tap === 0 || advanced
+  // A neutrophil that can't mature further wiggles; so does a cell tapped out of turn in Count.
+  const wiggles = mode === 'count' ? !state.counted : mode === 'differentiate' && state.stage === LAST_STAGE && !advanced
+  // The ring marks a cell that has been identified (Identify) or tallied (Count).
+  const ringed = mode === 'count' ? state.counted : identify && state.tap > 0
+  // A tap on the wrong kind of cell says what it is and what we are looking for instead.
+  const miss = mode === 'count' && state.tap > 0 && !state.counted && target !== undefined
 
   return (
     <button
@@ -92,7 +103,7 @@ export function Cell({ x, y, d, index, epoch, mode, durMs, state, celebrate, onT
       <span className="cell-float">
         <span
           key={state.tap}
-          className={`cell-pop${state.tap > 0 ? (!identify && state.stage === LAST_STAGE && !advanced ? ' wiggle' : ' pop') : ''}`}
+          className={`cell-pop${state.tap > 0 ? (wiggles ? ' wiggle' : ' pop') : ''}`}
         >
           <span className="cell-rot" style={{ rotate: `${Math.round(rnd(index, 30) * 360)}deg` }}>
             {advanced && (
@@ -125,15 +136,31 @@ export function Cell({ x, y, d, index, epoch, mode, durMs, state, celebrate, onT
             />
           </span>
         </span>
-        {identify && state.tap > 0 && (
-          <span className="found-ring" style={{ width: px(to.size) + 14, height: px(to.size) + 14 }} />
+        {ringed && (
+          <span
+            className={`found-ring${mode === 'count' ? ' counted' : ''}`}
+            style={{ width: px(to.size) + 14, height: px(to.size) + 14 }}
+          />
+        )}
+        {mode === 'count' && state.counted && (
+          <>
+            <span className="burst" style={{ width: px(to.size) + 14, height: px(to.size) + 14 }} />
+            <span className="tick">✓</span>
+          </>
         )}
         {celebrate && <span className="ring" />}
       </span>
       {showLabel && (
-        <span key={`${epoch}-${state.tap}`} className="cell-label">
+        <span key={`${epoch}-${state.tap}`} className={`cell-label${miss ? ' miss' : ''}`}>
           {sequence && <span className="lbl-from">{from.label}</span>}
-          <span className="lbl-to">{advanced && !sequence ? `${from.label} → ${to.label}` : to.label}</span>
+          <span className="lbl-to">
+            {advanced && !sequence ? `${from.label} → ${to.label}` : to.label}
+            {miss && target && (
+              <small>
+                Not {/^[aeiou]/i.test(target) ? 'an' : 'a'} {target}, keep looking
+              </small>
+            )}
+          </span>
         </span>
       )}
     </button>

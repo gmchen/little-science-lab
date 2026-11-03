@@ -58,6 +58,9 @@ export function ParentPanel({ open, onOpen, onClose, speed, onSpeed, seed, onSta
           <div className="panel" onPointerDown={(e) => e.stopPropagation()}>
             <h2>Game</h2>
             <div className="row">
+              <button className={mode === 'count' ? 'on' : ''} onClick={() => onMode('count')}>
+                Count cells
+              </button>
               <button className={mode === 'identify' ? 'on' : ''} onClick={() => onMode('identify')}>
                 Identify cells
               </button>

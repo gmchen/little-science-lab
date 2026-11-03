@@ -56,17 +56,22 @@ export function useIntroSetting(): [boolean, (on: boolean) => void] {
   return [on, set]
 }
 
-export type Mode = 'identify' | 'differentiate'
+export type Mode = 'count' | 'identify' | 'differentiate'
 
 const MODE_KEY = 'little-science-lab.granulopoiesis.mode'
+const MODES: Mode[] = ['count', 'identify', 'differentiate']
 
-/** Identify: tap a cell to see its name. Differentiate: tap a cell to mature it toward a neutrophil. */
+/**
+ * Count: tap every cell of one stage at a time, like a manual differential. Identify: tap a cell to
+ * see its name. Differentiate: tap a cell to mature it toward a neutrophil.
+ */
 export function useModeSetting(): [Mode, (m: Mode) => void] {
   const [mode, setMode] = useState<Mode>(() => {
     try {
-      return localStorage.getItem(MODE_KEY) === 'differentiate' ? 'differentiate' : 'identify'
+      const v = localStorage.getItem(MODE_KEY) as Mode | null
+      return v && MODES.includes(v) ? v : 'count'
     } catch {
-      return 'identify'
+      return 'count'
     }
   })
   const set = (next: Mode) => {
