@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react'
+import { useLayoutEffect, useRef, type CSSProperties } from 'react'
 import type { Mode } from './speed'
 import { LAST_STAGE, MAX_SIZE, STAGES } from './stages'
 
@@ -41,6 +41,8 @@ const LABEL_HOLD_MS = 1700
 const LABEL_SEQUENCE_MIN_MS = 500
 /** Point in the crossfade where the new cell overtakes the old one, so the name swaps with it. */
 const CROSSFADE_SWAP = 0.6
+/** Gap kept between a name label and the edge of the marrow. */
+const LABEL_EDGE_PAD = 6
 
 export function Cell({ x, y, d, index, epoch, mode, durMs, state, celebrate, target, onTap }: Props) {
   // Identify and Count hide a cell's name until it is tapped; Differentiate shows each stage's name.
@@ -88,6 +90,23 @@ export function Cell({ x, y, d, index, epoch, mode, durMs, state, celebrate, tar
   const ringed = mode === 'count' ? state.counted : identify && state.tap > 0
   // A tap on the wrong kind of cell says what it is and what we are looking for instead.
   const miss = mode === 'count' && state.tap > 0 && !state.counted && target !== undefined
+
+  // A label is centred under its cell, so near an edge it can run off the screen. Once it has appeared,
+  // measure it and slide it back inside the marrow (and up, if it would drop below the bottom).
+  const labelRef = useRef<HTMLSpanElement>(null)
+  useLayoutEffect(() => {
+    const el = labelRef.current
+    const stage = el?.closest('.stage')
+    if (!el || !stage) return
+    el.style.translate = '-50% 0'
+    const r = el.getBoundingClientRect()
+    const s = stage.getBoundingClientRect()
+    let dx = 0
+    if (r.left < s.left + LABEL_EDGE_PAD) dx = s.left + LABEL_EDGE_PAD - r.left
+    else if (r.right > s.right - LABEL_EDGE_PAD) dx = s.right - LABEL_EDGE_PAD - r.right
+    const dy = Math.min(0, s.bottom - LABEL_EDGE_PAD - r.bottom)
+    if (dx || dy) el.style.translate = `calc(-50% + ${dx}px) ${dy}px`
+  }, [state.tap, epoch, showLabel, miss, advanced])
 
   return (
     <button
@@ -151,7 +170,7 @@ export function Cell({ x, y, d, index, epoch, mode, durMs, state, celebrate, tar
         {celebrate && <span className="ring" />}
       </span>
       {showLabel && (
-        <span key={`${epoch}-${state.tap}`} className={`cell-label${miss ? ' miss' : ''}`}>
+        <span key={`${epoch}-${state.tap}`} ref={labelRef} className={`cell-label${miss ? ' miss' : ''}`}>
           {sequence && <span className="lbl-from">{from.label}</span>}
           <span className="lbl-to">
             {advanced && !sequence ? `${from.label} → ${to.label}` : to.label}
