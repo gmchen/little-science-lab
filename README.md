@@ -46,7 +46,7 @@ then test with Airplane Mode before relying on it.
 
 ## Cases (editable data)
 
-Each biopsy starts with a one-line clinical history ("Examine bone marrow" button; tap anywhere to
+Each biopsy starts with a one-line clinical history (tap the "Examine bone marrow" button to
 continue), then shows the marrow with the diagnosis, cellularity and a morphology cue pinned at the top.
 The cases come from two CSV files you can edit in Excel, in `src/apps/granulopoiesis/data/`:
 
@@ -60,3 +60,11 @@ The cases come from two CSV files you can edit in Excel, in `src/apps/granulopoi
 Save as CSV from Excel (not .xlsx). The files are checked when the app loads: bad rows are skipped and
 listed in the browser console as `[case library] ...`. The stage percentages are illustrative, not a full
 marrow differential. A seed always reproduces the same case, vignette and layout.
+
+## Copyright
+
+© 2026 Gregory Chen. All rights reserved.
+
+This repository is public so the app can be hosted on GitHub Pages. It is not open source: no license is
+granted to copy, modify or redistribute the code, the original cell artwork (`src/apps/granulopoiesis/art/`
+and `cells/`), or the case library (`src/apps/granulopoiesis/data/`). See `NOTICE`.
