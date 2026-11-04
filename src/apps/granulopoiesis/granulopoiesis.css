@@ -498,13 +498,14 @@
   flex-direction: column;
 }
 
-@media (orientation: landscape) and (min-width: 700px) {
+/* Wide enough, and not much taller than wide: the tally goes beside the marrow. */
+@media (min-width: 601px) and (min-aspect-ratio: 4/5) {
   .work {
     flex-direction: row;
   }
 
   .diff {
-    width: 270px;
+    width: clamp(240px, 30vw, 270px);
     border-top: none;
     border-left: 2px solid #ecd2c4;
   }
@@ -655,7 +656,8 @@
   overflow-y: auto;
 }
 
-@media (orientation: landscape) and (min-width: 700px) {
+/* Wide enough, and not much taller than wide: the tally goes beside the marrow. */
+@media (min-width: 601px) and (min-aspect-ratio: 4/5) {
   .diff {
     padding-right: max(14px, env(safe-area-inset-right));
   }
@@ -676,7 +678,10 @@
 
 .diff-rows {
   display: grid;
-  gap: 4px;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(3, auto);
+  grid-auto-flow: column;
+  gap: 4px 16px;
   margin: 8px 0 0;
   padding: 0;
   list-style: none;
@@ -693,9 +698,27 @@
   transition: background 300ms, border-color 300ms;
 }
 
-@media (orientation: landscape) and (min-width: 700px) {
+/* Wide enough, and not much taller than wide: the tally goes beside the marrow. */
+@media (min-width: 601px) and (min-aspect-ratio: 4/5) {
+  .diff-rows {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    grid-auto-flow: row;
+    gap: 4px;
+  }
+
   .diff-row {
-    grid-template-columns: 34px 1fr 3.8em;
+    grid-template-columns: 28px 1fr auto;
+    gap: 2px 8px;
+  }
+
+  .diff-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .diff-name {
+    font-size: 14px;
   }
 
   .diff-bar {
