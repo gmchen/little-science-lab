@@ -4,6 +4,21 @@
   box-sizing: border-box;
 }
 
+:root {
+  /* Top and bottom safe-area padding only matters once installed, when the page draws under the system
+     bars. In a browser tab those bars sit outside the page, and some Android browsers still report
+     insets there, which would leave empty bands above and below the game. */
+  --safe-top: 0px;
+  --safe-bottom: 0px;
+}
+
+@media (display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui) {
+  :root {
+    --safe-top: env(safe-area-inset-top);
+    --safe-bottom: env(safe-area-inset-bottom);
+  }
+}
+
 html,
 body,
 #root {

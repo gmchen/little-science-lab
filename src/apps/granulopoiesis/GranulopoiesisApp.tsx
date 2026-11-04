@@ -65,7 +65,7 @@ function Report({
             {COUNTER_LABEL[mode]}: {progress} / {count}
           </span>
           <button className="report-info" aria-label="Read the clinical history of this case again" onClick={onInfo}>
-            ⓘ Read the case again
+            <span aria-hidden="true">ⓘ</span> <span className="info-text">Read the case again</span>
           </button>
         </span>
       </div>
